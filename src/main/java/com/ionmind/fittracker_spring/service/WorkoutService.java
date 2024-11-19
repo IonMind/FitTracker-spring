@@ -15,6 +15,7 @@ import com.ionmind.fittracker_spring.repository.WorkoutRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,16 +26,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class WorkoutService {
-
+    
     private final WorkoutRepository workoutRepository;
     private final UserService userService;
     private final ExerciseService exerciseService;
-
+    
+    @Transactional
     public WorkoutResponse createWorkout(CreateWorkoutRequest request) {
         log.info("Creating workout: {} for user: {}", request.getName(), request.getUserId());
-
+        
         User user = userService.findUserById(request.getUserId());
-
+        
         Workout workout = Workout.builder()
                 .user(user)
                 .name(request.getName())
@@ -44,11 +46,11 @@ public class WorkoutService {
                 .comments(request.getComments())
                 .workoutExercises(new ArrayList<>())
                 .build();
-
+        
         // Add workout exercises
         for (WorkoutExerciseRequest exerciseRequest : request.getExercises()) {
             Exercise exercise = exerciseService.findExerciseById(exerciseRequest.getExerciseId());
-
+            
             WorkoutExercise workoutExercise = WorkoutExercise.builder()
                     .workout(workout)
                     .exercise(exercise)
@@ -58,22 +60,23 @@ public class WorkoutService {
                     .durationMinutes(exerciseRequest.getDurationMinutes())
                     .orderIndex(exerciseRequest.getOrderIndex())
                     .build();
-
+            
             workout.addWorkoutExercise(workoutExercise);
         }
-
+        
         Workout savedWorkout = workoutRepository.save(workout);
         log.info("Workout created successfully with id: {}", savedWorkout.getId());
-
+        
         return WorkoutMapper.toResponse(savedWorkout);
     }
-
+    
+    @Transactional
     public WorkoutResponse updateWorkout(Long workoutId, UpdateWorkoutRequest request) {
         log.info("Updating workout with id: {}", workoutId);
-
+        
         Workout workout = workoutRepository.findById(workoutId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout not found with id: " + workoutId));
-
+        
         // Update basic fields
         if (request.getName() != null) {
             workout.setName(request.getName());
@@ -90,16 +93,16 @@ public class WorkoutService {
         if (request.getComments() != null) {
             workout.setComments(request.getComments());
         }
-
+        
         // Update exercises if provided
         if (request.getExercises() != null && !request.getExercises().isEmpty()) {
             // Clear existing exercises
             workout.getWorkoutExercises().clear();
-
+            
             // Add new exercises
             for (WorkoutExerciseRequest exerciseRequest : request.getExercises()) {
                 Exercise exercise = exerciseService.findExerciseById(exerciseRequest.getExerciseId());
-
+                
                 WorkoutExercise workoutExercise = WorkoutExercise.builder()
                         .workout(workout)
                         .exercise(exercise)
@@ -109,66 +112,74 @@ public class WorkoutService {
                         .durationMinutes(exerciseRequest.getDurationMinutes())
                         .orderIndex(exerciseRequest.getOrderIndex())
                         .build();
-
+                
                 workout.addWorkoutExercise(workoutExercise);
             }
         }
-
+        
         Workout updatedWorkout = workoutRepository.save(workout);
         log.info("Workout updated successfully with id: {}", updatedWorkout.getId());
-
+        
         return WorkoutMapper.toResponse(updatedWorkout);
     }
-
+    
+    @Transactional
     public void deleteWorkout(Long workoutId) {
         log.info("Deleting workout with id: {}", workoutId);
-
+        
         if (!workoutRepository.existsById(workoutId)) {
             throw new ResourceNotFoundException("Workout not found with id: " + workoutId);
         }
-
+        
         workoutRepository.deleteById(workoutId);
         log.info("Workout deleted successfully with id: {}", workoutId);
     }
-
+    
+    @Transactional(readOnly = true)
     public WorkoutResponse getWorkoutById(Long workoutId) {
         log.info("Fetching workout with id: {}", workoutId);
-
+        
         Workout workout = workoutRepository.findById(workoutId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout not found with id: " + workoutId));
-
+        
         return WorkoutMapper.toResponse(workout);
     }
-
+    
+    @Transactional(readOnly = true)
     public List<WorkoutResponse> getWorkoutsByUserId(Long userId) {
         log.info("Fetching all workouts for user: {}", userId);
-
+        
         // Verify user exists
         userService.findUserById(userId);
-
+        
         List<Workout> workouts = workoutRepository.findByUserIdOrderByScheduledDateAsc(userId);
         return workouts.stream()
                 .map(WorkoutMapper::toResponse)
                 .collect(Collectors.toList());
     }
-
+    
+    @Transactional(readOnly = true)
     public List<WorkoutResponse> getActiveWorkouts(Long userId) {
-
+        log.info("Fetching active/pending workouts for user: {}", userId);
+        
+        // Verify user exists
+        userService.findUserById(userId);
+        
         List<WorkoutStatus> activeStatuses = Arrays.asList(WorkoutStatus.PENDING);
-        List<Workout> workouts = workoutRepository.findByUserIdAndStatusInOrderByScheduledDateAsc(userId,
-                activeStatuses);
-
+        List<Workout> workouts = workoutRepository.findByUserIdAndStatusInOrderByScheduledDateAsc(userId, activeStatuses);
+        
         return workouts.stream()
                 .map(WorkoutMapper::toResponse)
                 .collect(Collectors.toList());
     }
-
+    
+    @Transactional(readOnly = true)
     public List<WorkoutResponse> getWorkoutsByStatus(Long userId, WorkoutStatus status) {
         log.info("Fetching workouts with status {} for user: {}", status, userId);
-
+        
         // Verify user exists
         userService.findUserById(userId);
-
+        
         List<Workout> workouts = workoutRepository.findByUserIdAndStatus(userId, status);
         return workouts.stream()
                 .map(WorkoutMapper::toResponse)

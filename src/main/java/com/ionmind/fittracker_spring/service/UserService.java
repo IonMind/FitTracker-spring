@@ -10,6 +10,7 @@ import com.ionmind.fittracker_spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    
+    @Transactional
     public UserResponse createUser(CreateUserRequest request) {
         log.info("Creating user with username: {}", request.getUsername());
 
@@ -41,6 +42,7 @@ public class UserService {
         return UserMapper.toResponse(savedUser);
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         log.info("Fetching user with id: {}", id);
         User user = userRepository.findById(id)
@@ -48,6 +50,7 @@ public class UserService {
         return UserMapper.toResponse(user);
     }
 
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         log.info("Fetching all users");
         return userRepository.findAll().stream()
@@ -55,6 +58,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
