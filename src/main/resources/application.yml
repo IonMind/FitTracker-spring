@@ -23,7 +23,10 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
   
   # Jackson Configuration
   jackson:
@@ -38,4 +41,9 @@ server:
     include-message: always
     include-binding-errors: always
 
-
+# Logging Configuration
+logging:
+  level:
+    com.ionmind.fittracker_spring: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
