@@ -1,0 +1,1111 @@
+{
+	"info": {
+		"name": "FitTracker API Collection",
+		"description": "Complete API collection for FitTracker Spring Boot application. Tests all endpoints for User, Exercise, and Workout management.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "fittracker-api-v1"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response has user data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('username');",
+									"    pm.expect(jsonData).to.have.property('email');",
+									"});",
+									"",
+									"// Save user ID for later use",
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"createdUserId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"fitnessuser\",\n    \"email\": \"fitness@example.com\",\n    \"fullName\": \"Fitness Enthusiast\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Create a new user in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Get list of all users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"User has correct ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "Get a specific user by their ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message exists\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"999"
+							]
+						},
+						"description": "Test error handling for non-existent user"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Exercises",
+			"item": [
+				{
+					"name": "Get All Exercises",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Exercises array is not empty\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.above(0);",
+									"});",
+									"",
+									"pm.test(\"Exercise has required fields\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.property('id');",
+									"    pm.expect(jsonData[0]).to.have.property('name');",
+									"    pm.expect(jsonData[0]).to.have.property('category');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises"
+							]
+						},
+						"description": "Get all available exercises in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercise by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Exercise has complete data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('name');",
+									"    pm.expect(jsonData).to.have.property('description');",
+									"    pm.expect(jsonData).to.have.property('category');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"1"
+							]
+						},
+						"description": "Get a specific exercise by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Category - STRENGTH",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All exercises are STRENGTH category\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    jsonData.forEach(function(exercise) {",
+									"        pm.expect(exercise.category).to.eql('STRENGTH');",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/category/STRENGTH",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"category",
+								"STRENGTH"
+							]
+						},
+						"description": "Get all strength training exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Category - CARDIO",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All exercises are CARDIO category\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    jsonData.forEach(function(exercise) {",
+									"        pm.expect(exercise.category).to.eql('CARDIO');",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/category/CARDIO",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"category",
+								"CARDIO"
+							]
+						},
+						"description": "Get all cardio exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Category - FLEXIBILITY",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/category/FLEXIBILITY",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"category",
+								"FLEXIBILITY"
+							]
+						},
+						"description": "Get all flexibility exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Muscle Group - CHEST",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All exercises target CHEST\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    jsonData.forEach(function(exercise) {",
+									"        pm.expect(exercise.muscleGroup).to.eql('CHEST');",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/muscle-group/CHEST",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"muscle-group",
+								"CHEST"
+							]
+						},
+						"description": "Get all chest exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Muscle Group - LEGS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/muscle-group/LEGS",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"muscle-group",
+								"LEGS"
+							]
+						},
+						"description": "Get all leg exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Muscle Group - BACK",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/muscle-group/BACK",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"muscle-group",
+								"BACK"
+							]
+						},
+						"description": "Get all back exercises"
+					},
+					"response": []
+				}
+			],
+			"description": "Exercise library endpoints"
+		},
+		{
+			"name": "Workouts",
+			"item": [
+				{
+					"name": "Create Workout - Full Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Workout created with exercises\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.exercises.length).to.be.above(0);",
+									"});",
+									"",
+									"// Save workout ID",
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"workoutId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 1,\n    \"name\": \"Full Body Strength Workout\",\n    \"description\": \"Complete full body workout targeting all major muscle groups\",\n    \"scheduledDate\": \"2025-11-14T07:00:00\",\n    \"status\": \"PENDING\",\n    \"comments\": \"Focus on form and controlled movements\",\n    \"exercises\": [\n        {\n            \"exerciseId\": 1,\n            \"sets\": 3,\n            \"repetitions\": 10,\n            \"weight\": 60.5,\n            \"orderIndex\": 0\n        },\n        {\n            \"exerciseId\": 7,\n            \"sets\": 4,\n            \"repetitions\": 12,\n            \"weight\": 100.0,\n            \"orderIndex\": 1\n        },\n        {\n            \"exerciseId\": 4,\n            \"sets\": 3,\n            \"repetitions\": 8,\n            \"weight\": 70.0,\n            \"orderIndex\": 2\n        },\n        {\n            \"exerciseId\": 10,\n            \"sets\": 3,\n            \"repetitions\": 12,\n            \"weight\": 25.0,\n            \"orderIndex\": 3\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts"
+							]
+						},
+						"description": "Create a new full body strength workout"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workout - Cardio Session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Save cardio workout ID",
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"cardioWorkoutId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 1,\n    \"name\": \"High Intensity Cardio\",\n    \"description\": \"30-minute cardio session\",\n    \"scheduledDate\": \"2025-11-15T18:00:00\",\n    \"status\": \"PENDING\",\n    \"exercises\": [\n        {\n            \"exerciseId\": 17,\n            \"sets\": 1,\n            \"repetitions\": 1,\n            \"durationMinutes\": 30,\n            \"orderIndex\": 0\n        },\n        {\n            \"exerciseId\": 19,\n            \"sets\": 3,\n            \"repetitions\": 50,\n            \"orderIndex\": 1\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts"
+							]
+						},
+						"description": "Create a cardio-focused workout"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workout - Upper Body",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 2,\n    \"name\": \"Upper Body Power\",\n    \"description\": \"Chest, back, and shoulders\",\n    \"scheduledDate\": \"2025-11-16T08:00:00\",\n    \"status\": \"PENDING\",\n    \"exercises\": [\n        {\n            \"exerciseId\": 1,\n            \"sets\": 4,\n            \"repetitions\": 8,\n            \"weight\": 70.0,\n            \"orderIndex\": 0\n        },\n        {\n            \"exerciseId\": 4,\n            \"sets\": 3,\n            \"repetitions\": 10,\n            \"weight\": 80.0,\n            \"orderIndex\": 1\n        },\n        {\n            \"exerciseId\": 12,\n            \"sets\": 3,\n            \"repetitions\": 12,\n            \"weight\": 35.0,\n            \"orderIndex\": 2\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts"
+							]
+						},
+						"description": "Create an upper body workout for user 2"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workout by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Workout has exercises\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.exercises).to.be.an('array');",
+									"    pm.expect(jsonData.exercises.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/{{workoutId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"{{workoutId}}"
+							]
+						},
+						"description": "Get a specific workout by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Workouts for User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Workouts array returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/user/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"user",
+								"1"
+							]
+						},
+						"description": "Get all workouts for user ID 1, sorted by scheduled date"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Workouts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All workouts are PENDING\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    jsonData.forEach(function(workout) {",
+									"        pm.expect(workout.status).to.eql('PENDING');",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/user/1/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"user",
+								"1",
+								"active"
+							]
+						},
+						"description": "Get all active (PENDING) workouts for user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workouts by Status - PENDING",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/user/1/status/PENDING",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"user",
+								"1",
+								"status",
+								"PENDING"
+							]
+						},
+						"description": "Get all pending workouts for user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workouts by Status - COMPLETED",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/user/1/status/COMPLETED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"user",
+								"1",
+								"status",
+								"COMPLETED"
+							]
+						},
+						"description": "Get all completed workouts for user"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout - Mark Complete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Workout status is COMPLETED\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('COMPLETED');",
+									"});",
+									"",
+									"pm.test(\"Comments updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.comments).to.include('Excellent workout');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"COMPLETED\",\n    \"comments\": \"Excellent workout! Felt strong today. Increased weight on bench press.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts/{{workoutId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"{{workoutId}}"
+							]
+						},
+						"description": "Update workout to mark as completed with comments"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout - Modify Name and Description",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Full Body Strength\",\n    \"description\": \"Modified workout plan with progressive overload\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts/{{cardioWorkoutId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"{{cardioWorkoutId}}"
+							]
+						},
+						"description": "Update workout name and description"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout - Change Exercises",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"exercises\": [\n        {\n            \"exerciseId\": 1,\n            \"sets\": 4,\n            \"repetitions\": 10,\n            \"weight\": 65.0,\n            \"orderIndex\": 0\n        },\n        {\n            \"exerciseId\": 7,\n            \"sets\": 4,\n            \"repetitions\": 10,\n            \"weight\": 110.0,\n            \"orderIndex\": 1\n        },\n        {\n            \"exerciseId\": 14,\n            \"sets\": 3,\n            \"repetitions\": 30,\n            \"orderIndex\": 2\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts/{{cardioWorkoutId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"{{cardioWorkoutId}}"
+							]
+						},
+						"description": "Update workout exercises with new ones"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout - Cancel",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"CANCELLED\",\n    \"comments\": \"Workout cancelled due to scheduling conflict\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts/{{cardioWorkoutId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"{{cardioWorkoutId}}"
+							]
+						},
+						"description": "Cancel a workout"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Workout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/{{cardioWorkoutId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"{{cardioWorkoutId}}"
+							]
+						},
+						"description": "Delete a workout from the system"
+					},
+					"response": []
+				}
+			],
+			"description": "Workout management endpoints"
+		},
+		{
+			"name": "Error Handling Tests",
+			"item": [
+				{
+					"name": "Create User - Validation Error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error response has validation errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('errors');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"\",\n    \"email\": \"invalid-email\",\n    \"fullName\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Test validation error handling"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workout - Invalid User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 9999,\n    \"name\": \"Test Workout\",\n    \"exercises\": [\n        {\n            \"exerciseId\": 1,\n            \"sets\": 3,\n            \"repetitions\": 10,\n            \"orderIndex\": 0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts"
+							]
+						},
+						"description": "Test error when creating workout with invalid user ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workout - Invalid Exercise",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 1,\n    \"name\": \"Test Workout\",\n    \"exercises\": [\n        {\n            \"exerciseId\": 9999,\n            \"sets\": 3,\n            \"repetitions\": 10,\n            \"orderIndex\": 0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts"
+							]
+						},
+						"description": "Test error when creating workout with invalid exercise ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workout - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message contains workout not found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Workout not found');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/workouts/9999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"workouts",
+								"9999"
+							]
+						},
+						"description": "Test 404 error for non-existent workout"
+					},
+					"response": []
+				}
+			],
+			"description": "Test error handling scenarios"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "workoutId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cardioWorkoutId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "createdUserId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
