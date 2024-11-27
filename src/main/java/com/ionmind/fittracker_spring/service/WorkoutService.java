@@ -71,11 +71,16 @@ public class WorkoutService {
     }
     
     @Transactional
-    public WorkoutResponse updateWorkout(Long workoutId, UpdateWorkoutRequest request) {
+    public WorkoutResponse updateWorkout(Long workoutId, UpdateWorkoutRequest request, Long userId) {
         log.info("Updating workout with id: {}", workoutId);
         
         Workout workout = workoutRepository.findById(workoutId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout not found with id: " + workoutId));
+        
+        // Check if the workout belongs to the authenticated user
+        if (!workout.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Workout not found with id: " + workoutId);
+        }
         
         // Update basic fields
         if (request.getName() != null) {
@@ -124,10 +129,14 @@ public class WorkoutService {
     }
     
     @Transactional
-    public void deleteWorkout(Long workoutId) {
+    public void deleteWorkout(Long workoutId, Long userId) {
         log.info("Deleting workout with id: {}", workoutId);
         
-        if (!workoutRepository.existsById(workoutId)) {
+        Workout workout = workoutRepository.findById(workoutId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workout not found with id: " + workoutId));
+        
+        // Check if the workout belongs to the authenticated user
+        if (!workout.getUser().getId().equals(userId)) {
             throw new ResourceNotFoundException("Workout not found with id: " + workoutId);
         }
         
@@ -136,11 +145,16 @@ public class WorkoutService {
     }
     
     @Transactional(readOnly = true)
-    public WorkoutResponse getWorkoutById(Long workoutId) {
+    public WorkoutResponse getWorkoutById(Long workoutId, Long userId) {
         log.info("Fetching workout with id: {}", workoutId);
         
         Workout workout = workoutRepository.findById(workoutId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout not found with id: " + workoutId));
+        
+        // Check if the workout belongs to the authenticated user
+        if (!workout.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Workout not found with id: " + workoutId);
+        }
         
         return WorkoutMapper.toResponse(workout);
     }

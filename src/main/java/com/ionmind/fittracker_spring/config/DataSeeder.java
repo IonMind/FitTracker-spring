@@ -9,6 +9,7 @@ import com.ionmind.fittracker_spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -26,6 +27,7 @@ public class DataSeeder implements CommandLineRunner {
     
     private final ExerciseRepository exerciseRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     
     @Override
     public void run(String... args) throws Exception {
@@ -43,19 +45,23 @@ public class DataSeeder implements CommandLineRunner {
             
             List<User> users = Arrays.asList(
                 User.builder()
-                    .username("johndoe")
-                    .email("john.doe@example.com")
-                    .fullName("John Doe")
+                    .username("raj")
+                    .email("raj.singh@example.com")
+                    .password(passwordEncoder.encode("password123"))
+                    .fullName("Raj Singh")
                     .build(),
                 User.builder()
-                    .username("janedoe")
-                    .email("jane.doe@example.com")
-                    .fullName("Jane Doe")
+                    .username("sham")
+                    .email("sham.gupta@example.com")
+                    .password(passwordEncoder.encode("password123"))
+                    .fullName("Sham Gupta")
                     .build()
             );
             
             userRepository.saveAll(users);
             log.info("Seeded {} users", users.size());
+            log.info("Demo credentials - Username: raj, Password: password123");
+            log.info("Demo credentials - Username: sham, Password: password123");
         }
     }
     
@@ -227,7 +233,7 @@ public class DataSeeder implements CommandLineRunner {
                     .build(),
                 Exercise.builder()
                     .name("Bosu Ball Exercises")
-                    .description("Perform exercises on a Bosu ball for balance training")
+                    .description("Perform exercises on a Bos ball for balance training")
                     .category(ExerciseCategory.BALANCE)
                     .muscleGroup(MuscleGroup.FULL_BODY)
                     .build()
