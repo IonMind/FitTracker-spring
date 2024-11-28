@@ -1,0 +1,442 @@
+{
+	"info": {
+		"_postman_id": "fittracker-spring-api",
+		"name": "FitTracker Spring API",
+		"description": "Postman collection for testing FitTracker Spring Boot application REST APIs. This collection includes endpoints for authentication, workout management, and exercise browsing.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"description": "Endpoints for user authentication and registration",
+			"item": [
+				{
+					"name": "Register New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"priya\",\n  \"email\": \"priya.sharma@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Priya Sharma\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account. Returns authentication token and user details.\n\n**Note:** Pre-seeded users (already available):\n- Username: raj, Password: password123\n- Username: sham, Password: password123\n\n**Validations:**\n- Username: 3-50 characters, required\n- Email: valid email format, required\n- Password: minimum 6 characters, required\n- Full name: required\n\n**Response includes:**\n- JWT token\n- User ID\n- Username\n- Email\n- Full name"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"raj\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive JWT token for accessing protected endpoints.\n\n**Pre-seeded test users:**\n- Username: **raj**, Password: **password123**\n- Username: **sham**, Password: **password123**\n\n**Request Body:**\n- Username: required\n- Password: required\n\n**Response includes:**\n- JWT token (save this for authenticated requests)\n- User ID\n- Username\n- Email\n- Full name"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get the profile information of the currently authenticated user.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Returns:** Current user details\n- User ID\n- Username\n- Email\n- Full name\n\n**Note:** No token is returned with this endpoint, only user profile data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exercises",
+			"description": "Browse and search exercises (requires authentication)",
+			"item": [
+				{
+					"name": "Get All Exercises",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises"
+							]
+						},
+						"description": "Retrieve all available exercises in the system.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Returns:** Array of exercise objects including:\n- ID\n- Name\n- Description\n- Category (CARDIO, STRENGTH, FLEXIBILITY, BALANCE, SPORTS)\n- Muscle group (CHEST, BACK, SHOULDERS, ARMS, LEGS, CORE, FULL_BODY)\n- Instructions"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercise by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"1"
+							]
+						},
+						"description": "Retrieve details of a specific exercise by ID.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter:**\n- id: Exercise ID (Long)\n\n**Returns:** Exercise object with complete details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/category/STRENGTH",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"category",
+								"STRENGTH"
+							]
+						},
+						"description": "Filter exercises by category.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter - category (enum):**\n- CARDIO\n- STRENGTH\n- FLEXIBILITY\n- BALANCE\n- SPORTS\n\n**Returns:** Array of exercises in the specified category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Muscle Group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/muscle-group/CHEST",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"muscle-group",
+								"CHEST"
+							]
+						},
+						"description": "Filter exercises by target muscle group.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter - muscleGroup (enum):**\n- CHEST\n- BACK\n- SHOULDERS\n- ARMS\n- LEGS\n- CORE\n- FULL_BODY\n\n**Returns:** Array of exercises targeting the specified muscle group"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workouts",
+			"description": "Workout management endpoints (requires authentication)",
+			"item": [
+				{
+					"name": "Create Workout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 1,\n  \"name\": \"Full Body Workout\",\n  \"description\": \"Comprehensive full body strength training session\",\n  \"scheduledDate\": \"2025-11-20T10:00:00\",\n  \"status\": \"PENDING\",\n  \"comments\": \"Focus on form over weight\",\n  \"exercises\": [\n    {\n      \"exerciseId\": 1,\n      \"sets\": 3,\n      \"repetitions\": 12,\n      \"weight\": 50.0,\n      \"durationMinutes\": 0,\n      \"orderIndex\": 0\n    },\n    {\n      \"exerciseId\": 2,\n      \"sets\": 3,\n      \"repetitions\": 10,\n      \"weight\": 60.0,\n      \"durationMinutes\": 0,\n      \"orderIndex\": 1\n    },\n    {\n      \"exerciseId\": 3,\n      \"sets\": 3,\n      \"repetitions\": 15,\n      \"weight\": 0,\n      \"durationMinutes\": 30,\n      \"orderIndex\": 2\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts"
+							]
+						},
+						"description": "Create a new workout session with exercises.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Request Body:**\n- userId: Auto-filled from authenticated user\n- name: Workout name (max 100 chars, required)\n- description: Workout description (max 500 chars, optional)\n- scheduledDate: ISO 8601 datetime format (optional)\n- status: PENDING, COMPLETED, or CANCELLED (default: PENDING)\n- comments: Additional notes (optional)\n- exercises: Array of exercises (min 1 required)\n  - exerciseId: Reference to exercise (required)\n  - sets: Number of sets (min 1, required)\n  - repetitions: Reps per set (min 1, required)\n  - weight: Weight in kg (min 0, optional)\n  - durationMinutes: Duration for cardio (min 0, optional)\n  - orderIndex: Exercise order (min 0, required)\n\n**Returns:** Created workout with all details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Workouts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts"
+							]
+						},
+						"description": "Retrieve all workouts for the authenticated user.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Returns:** Array of workout objects including:\n- Workout details (id, name, description, dates, status)\n- Associated exercises with sets, reps, weight, etc.\n- User information"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workout by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"1"
+							]
+						},
+						"description": "Retrieve a specific workout by ID (must belong to authenticated user).\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter:**\n- id: Workout ID (Long)\n\n**Access Control:** Only accessible by the workout owner\n\n**Returns:** Complete workout details with exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Active Workouts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"active"
+							]
+						},
+						"description": "Retrieve all active (non-cancelled, non-completed) workouts for the authenticated user.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Returns:** Array of active workout objects"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workouts by Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts/status/COMPLETED",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"status",
+								"COMPLETED"
+							]
+						},
+						"description": "Filter workouts by status for the authenticated user.\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter - status (enum):**\n- PENDING: Scheduled or upcoming workouts\n- COMPLETED: Finished workouts\n- CANCELLED: Cancelled workouts\n\n**Returns:** Array of workouts matching the status"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Full Body Workout\",\n  \"description\": \"Modified comprehensive training session\",\n  \"scheduledDate\": \"2025-11-21T14:00:00\",\n  \"status\": \"COMPLETED\",\n  \"comments\": \"Great session, increased weights\",\n  \"exercises\": [\n    {\n      \"exerciseId\": 1,\n      \"sets\": 4,\n      \"repetitions\": 12,\n      \"weight\": 55.0,\n      \"durationMinutes\": 0,\n      \"orderIndex\": 0\n    },\n    {\n      \"exerciseId\": 2,\n      \"sets\": 4,\n      \"repetitions\": 10,\n      \"weight\": 65.0,\n      \"durationMinutes\": 0,\n      \"orderIndex\": 1\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"1"
+							]
+						},
+						"description": "Update an existing workout (must belong to authenticated user).\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter:**\n- id: Workout ID (Long)\n\n**Request Body (all fields optional):**\n- name: Updated workout name (max 100 chars)\n- description: Updated description (max 500 chars)\n- scheduledDate: New scheduled date (ISO 8601)\n- status: Updated status (PENDING, COMPLETED, CANCELLED)\n- comments: Updated comments\n- exercises: Updated exercise list (replaces existing)\n\n**Access Control:** Only the workout owner can update\n\n**Returns:** Updated workout details"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Workout",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text",
+								"description": "JWT token from login/register"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/workouts/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"workouts",
+								"1"
+							]
+						},
+						"description": "Delete a workout (must belong to authenticated user).\n\n**Authentication:** Required (JWT Bearer token)\n\n**Path Parameter:**\n- id: Workout ID (Long)\n\n**Access Control:** Only the workout owner can delete\n\n**Returns:** 204 No Content on success"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

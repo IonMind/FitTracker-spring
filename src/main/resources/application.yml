@@ -47,3 +47,8 @@ logging:
     com.ionmind.fittracker_spring: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# JWT Configuration
+jwt:
+  secret: fittracker-spring-secret-key-minimum-256-bits-required-for-hs256-algorithm-security
+  expiration: 86400000  # 24 hours in milliseconds
